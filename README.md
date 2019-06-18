@@ -1,14 +1,12 @@
 # basic_storefront
-Source code for a basic site where users can create and purchase products within web2py. 
+Source code for an unpublished storefront where users can create and purchase products within web2py. 
 
 
-# Launching this pacakage in development mode
+# Launching the site locally
 1) Install web2py
 
 2) Relocate your copy of 'basic_storefront' package into ~/web2py/applications
 
-3) Launch web2py 
+3) Launch web2py as a python 2 application
 
-4) Launch the website within the web2py admin interface
-
-
+4) Execute the storefront in the web2py admin interface
