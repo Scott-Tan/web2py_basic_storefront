@@ -1,0 +1,165 @@
+{{extend 'layout.html'}}
+
+{{block head}}
+<link href="{{=URL('static','css/index.css')}}" rel="stylesheet" type="text/css"/>
+
+<script src="{{=URL('static', 'js/vue.js')}}"></script>
+<script>
+    var my_url = "{{=URL('api', 'my_method')}}";
+
+    var search_url = "{{=URL('api', 'search', user_signature=True, hash_vars=False)}}";
+    var get_product_list_url ="{{=URL('api', 'get_product_list', user_signature=True)}}";
+
+    var set_stars_url = "{{=URL('api', 'set_stars', user_signature=True, hash_vars=False)}}";
+
+    var get_reviews_url = "{{=URL('api', 'get_reviews')}}";
+    var set_review_url = "{{=URL('api', 'set_review', user_signature=True, hash_vars=False)}}";
+    var is_logged_in = {{='false' if auth.user is None else 'true'}};
+
+    var cart_get_url = "{{=URL('api', 'cart_get', user_signature=True, hash_vars=False)}}";
+    var cart_inc_url = "{{=URL('api', 'cart_inc', user_signature=True, hash_vars=False)}}"
+    var cart_clear_url = "{{=URL('api', 'cart_clear', user_signature=True, hash_vars=False)}}"
+</script>
+{{end}}
+
+<div class="main_content">
+
+    <div id="vue-div" class="display:none">
+        <!-- Your code goes here.  Remember to call $("#vue-div").show() once you get the data for the first time. -->
+        <div class="search_bar">
+            <input type="text" v-model="search_string" v-on:input="do_search" placeholder="Search..."/>
+        </div>
+        <div v-if="is_logged_in" class="cart_toggle_status">
+            <span v-if="page=='prod'">
+                <button class="btn orange" v-on:click="goto('cart')">
+                    <i class="fa fa-lg fa-shopping-cart"></i> ${cart_size}
+                </button>
+            </span>
+            <span v-if="page=='cart'">
+                <button class="btn" v-on:click="goto('prod')"> Continue shopping </button>
+            </span>
+        </div>
+        
+        <div v-if="page=='prod'">
+                <!-- Message in case there are no products. -->
+            <div v-if="product_list_display.length === 0">No products were found.</div>
+
+            <div class="product_list">
+                <div class="product_div" v-for="product in product_list_display">
+                    <div class="prod_div_header">
+                        <div class="product_name">${product.product_name}</div>
+                        <div class="product_price">$${product.product_price}</div>
+                    </div>
+                    <div class="prod_div_body">
+                        <div class="product_desc">${product.product_desc}</div>
+                    </div>
+                    
+                    <div v-if="is_logged_in" class="prod_buy">
+                        <span class="buy_buttons">
+                            <button class="btn" v-on:click="buy_inc_quantity(product._idx, -1)"><i class="fa fa-minus"></i></button>
+                            <span class="desired_quantity">${product.desired_quantity}</span>
+                            <button class="btn" v-on:click="buy_inc_quantity(product._idx, 1)"><i class="fa fa-plus"></i></button>
+                            <button class="btn red" v-on:click="buy_product(product._idx)"><i class="fa fa-lg fa-shopping-cart"></i> Buy</button>
+                        </span>
+                    </div>
+                    <div class="prod_div_foot">
+                        <div v-if="product._review_display" class="review_open">
+                            <div v-if="!is_logged_in" class="review_no_user">
+                                / Log in to submit your own review! /
+                            </div>
+                            <div v-if="is_logged_in" id="user_review_id" class="user_review_div">
+                                <div class="user_review">
+                                    <div class="user_review_header">
+                                        <div class="user_review_msg">
+                                                Your review/star-rating: 
+                                        </div>
+                                        <div class="star_rating "> <!-- ${product.rating} -->
+                                            
+                                            <span v-on:mouseout="stars_out(product._idx)">
+                                                <span v-on:mouseover="stars_over(product._idx, idx)"
+                                                    v-on:click="set_stars(product._idx, idx)"
+                                                    v-for="idx in star_indices">
+                                                    <i v-if="idx <= product._star_rating" class="fa fa-star"></i>
+                                                    <i v-if="idx > product._star_rating" class="fa fa-star-o"></i>
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="user_review_content">
+                                        <textarea id="user_review_content" v-if="product._user_review != null" 
+                                            rows="6" cols="64" >${product._review_content}</textarea>
+                                    </div>
+                                    <div class="user_review_submit">
+                                        <button v-if="!show_checkmark" id="user_review_submit" class="btn_review_submit" v-on:click="review_submit(product._idx)">Submit!
+                                        </button>  
+                                        <button v-if="show_checkmark" id="user_review_submit" class="btn_review_submit">Submit!
+                                                <i class="fa fa-check show_checkmark"></i>
+                                        </button>  
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="review_list">
+                                <!--Reviews by other users below.-->
+                                <span v-for="unioned in product._union">
+                                    <div class="review_record">
+                                        <div class="review_record_star">
+                                            <span v-for="idx in star_indices">
+                                                <i v-if="idx <= unioned.star_rating" class="fa fa-star"></i>
+                                                <i v-if="idx > unioned.star_rating" class="fa fa-star-o"></i>
+                                            </span>
+                                        </div>
+                                        <div class="review_record_content">
+                                            ${unioned.review_content}
+                                        </div>
+                                        <div class="review_record_email">
+                                            by: ${unioned.review_user_email}
+                                        </div>
+                                    </div>
+                                </span>
+                            </div>
+                            <div>
+                                <button id="btn_collapse" v-on:click="review_collapse(product._idx)" class="btn_review_collapse">Collapse Reviews</button>
+                            </div>
+                        </div>
+                        <div v-if="!product._review_display" class="review_collapse">
+                            <div class="star_rating "> <!-- ${product.rating} -->
+                                
+                                <!--Why can't I remove the v-on elements w/o errors !?!?-->
+                                <span v-on:mouseout="">
+                                    <span v-on:mouseover=""
+                                        v-on:click=""
+                                        v-for="idx in star_indices">
+                                        <i v-if="idx <= product._num_stars_display" class="fa fa-star"></i>
+                                        <i v-if="idx > product._num_stars_display" class="fa fa-star-o"></i>
+                                    </span>
+                                </span>
+                            </div>
+                            <button v-on:click="review_open(product._idx)" class="btn_review_open btn">Reviews</button>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="page=='cart'">
+            <div v-if="cart.length==0" class="container">
+                <div class="cart_empty_msg">
+                    Your cart is empty
+                </div>
+            </div>
+            <div v-for="item in cart" class="container item_list">
+                <div class="item">
+                    <div class="item_info">You have '${item.cart_amount}' orders for '${item.cart_prod_name}'</div>
+                </div>
+            </div>
+            <div>
+                <button v-on:click="cart_purchase(cart)" class="cart_purchase">Purchase Orders</button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="{{=URL('static', 'js/default_index.js')}}"></script>

@@ -1,0 +1,147 @@
+.main_content{
+    display: flex;
+    flex-direction: column;
+    background-color: #5a5a5a;
+    align-items: center;
+    padding: 30px;
+}
+
+.cart_empty_msg{
+    margin: 40px;
+}
+
+.item_list{
+    margin: 40px;
+}
+
+.cart_purchase{
+    float: right;
+}
+
+.search_bar{
+    border-style: solid;
+    border-width: 1px;
+    width: 600px;
+    margin-bottom: 20px;
+}
+
+.product_div, .item{
+    display: flex;
+    flex-direction: column;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 3px;
+    background-color: #d3d3d3;
+    width: 600px;
+    margin-bottom: 20px;
+    padding: 10px;
+    
+}
+
+.prod_div_header{
+    display: flex;
+    flex-direction: row;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.product_name{
+    margin-right: 10px;
+}
+
+.prod_div_body{
+    margin-bottom: 15px;
+}
+
+.review_collapse{
+    display: flex;
+    flex-direction: row;
+}
+
+.star_rating{
+    margin-right: 10px;
+}
+
+.btn_review_collapse, .btn_review_open{
+    border-radius: 6px;
+    background-color: #808080;
+}
+
+.review_open{
+    display: block;
+}
+
+.review_no_user{
+    color: rgb(151, 71, 71);
+    margin-left: 5px;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.user_review{
+    display: flex;
+    flex-direction: column;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 3px;
+    background-color: gray;
+    margin: 5px;
+    margin-bottom: 13px;
+}
+
+.user_review_header{
+    display: flex;
+    flex-direction: row;
+    font-weight: bold;
+    margin: 10px 20px 10px 20px
+}
+
+.user_review_msg{
+    margin-right:20px;
+}
+
+.user_review_content{
+    margin-left: 12px;
+    margin-right: 12px;
+    margin-bottom: 6px;
+}
+
+.user_review_submit{
+    float: right;
+}
+.btn_review_submit{
+    float: right;
+    background-color: rgb(173, 202, 198);
+}
+
+.show_checkmark{
+    color: green;
+}
+
+.review_list{
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+    margin-bottom: 3px;
+}
+
+.review_record, .review_record_content{
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 3px;
+    margin: 5px;
+    padding: 5px;
+}
+
+.review_record_star{
+    margin-left: 5px;
+}
+
+.review_record_email{
+    text-align: right;
+}
+
+.btn_review_collapse{
+    float: right;    
+}
+
