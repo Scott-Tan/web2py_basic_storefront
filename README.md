@@ -1,4 +1,4 @@
-# basic_storefront
+# Storefront
 Source code for a simple, unpublished storefront where users can create and purchase products within web2py. 
 
 
