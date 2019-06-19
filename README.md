@@ -2,7 +2,7 @@
 Source code for a simple, unpublished storefront where users can create and purchase products within web2py. 
 
 
-# Usage
+# Development Usage
 1) Install web2py
 
 2) Relocate your copy of 'basic_storefront' package into ~/web2py/applications
